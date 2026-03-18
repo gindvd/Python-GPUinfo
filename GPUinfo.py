@@ -54,38 +54,67 @@ def get_card_info():
     return run_cmd(primary_cmd)
 
   return run_piped_cmds(primary_cmd, secondary_cmd)
+
+def run_cmd(cmd):
+  proc = subprocess.Popen(cmd, 
+                          stdout=subprocess.PIPE, 
+                          stderr=subprocess.PIPE, 
+                          shell=False, 
+                          text=True)
+
+  try:
+    out, err = proc.communicate()
+    proc.wait()
+    
+    rc = proc.returncode
+
+  except FileNotFoundError as e:
+    print(e)
   
-def run_single_cmd(primary_cmd):
+  except Exception as e:
+    print(e)
+
+  else:
+    if rc != 0:
+      print(f"{str(rc)}: {err}")
+
+    else:
+      return out.split()
+
+
+def run_piped_cmd(cmd1, cmd2):
+  proc1 = subprocess.Popen(cmd1,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+                            shell=False,
+                            text=True)
+
+  proc2 = subprocess.Popen(secondary_cmd,
+                             stdin=proc1.stdout,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE,
+                             shell=False,
+                             text=True) 
+   
   try:
-    # Runs command and returns all connected GPU names as a string
-    result = subprocess.Popen(primary_cmd, stdout=subprocess.PIPE, 
-                              stderr=subprocess.PIPE, shell=False, text=True)
+    proc1.stdout.close()
+    out, err = proc2.communicate()
+    
+    proc2.wait()
+    rc = proc2.returncode
 
-    output, _ = result.communicate()
-    return output.split()
+  except FileNotFoundError as e:
+    print(e)
+  
+  except Exception as e:
+    print(e)
+    
+  else:
+    if rc != 0:
+      print(f"{str(rc)}: {err}")
 
-  except FileNotFoundError as err:
-    print(err)
-  except subprocess.CalledProcessError as err:
-    print(err)
-
-def run_multi_cmds( primary_cmd, secondary_cmd):
-  try:
-    process = subprocess.Popen(primary_cmd, stdout=subprocess.PIPE, 
-                               stderr=subprocess.PIPE, shell=False, text=True)
-
-    result = subprocess.Popen(secondary_cmd, stdin=process.stdout, 
-                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, 
-                              shell=False, text=True)
-
-    process.stdout.close()
-    output, _ = result.communicate()
-    return output.split()
-
-  except FileNotFoundError as err:
-    print(err)
-  except subprocess.CalledProcessError as err:
-    print(err)
+    else:
+      return out.split()
 
 def clean_data(list):
   clean_list = []
