@@ -46,23 +46,15 @@ def get_card_info() -> list[str] | None:
   else:
     cmd_entry = CMD_DICT.get(platform)
 
-  if cmd_entry is None:
-    create_logs(f"No command configuration found for OS: {platform}")
-    return None
-
   parent_cmd: list[str] = cmd_entry.get("parent")
   child_cmd: list[str] | None = cmd_entry.get("child")
 
-  if parent_cmd is None:
-    create_logs("Parent command set to None")
-    return None
-
   if child_cmd is None:
-    return run_cmd(parent_cmd)
+    return run_parent(parent_cmd)
 
-  return run_piped_cmd(parent_cmd, child_cmd)
+  return run_parent_and_child(parent_cmd, child_cmd)
 
-def run_cmd(cmd: list[str]) -> list[str] | None:
+def run_parent(cmd: list[str]) -> list[str] | None:
   try:
     proc = subprocess.Popen(cmd, 
                             stdout=subprocess.PIPE, 
@@ -91,18 +83,18 @@ def run_cmd(cmd: list[str]) -> list[str] | None:
     if rc != 0:
       raise subprocess.CalledProcessError(rc, cmd, output=out, stderr=err)
 
-    return out.split()
+    return out
 
 
-def run_piped_cmd(cmd1: list[str], cmd2: list[str]) -> list[str] | None:
+def run_parent_and_child(parent_cmd: list[str], child_cmd: list[str]) -> list[str] | None:
   try:
-    proc1 = subprocess.Popen(cmd1,
+    proc1 = subprocess.Popen(parent_cmd,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
                              shell=False,
                              text=True)
 
-    proc2 = subprocess.Popen(cmd2,
+    proc2 = subprocess.Popen(child_cmd,
                              stdin=proc1.stdout,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
@@ -130,9 +122,9 @@ def run_piped_cmd(cmd1: list[str], cmd2: list[str]) -> list[str] | None:
     
   else:
     if rc != 0:
-      raise subprocess.CalledProcessError(rc, cmd2, output=out, stderr=err)
+      raise subprocess.CalledProcessError(rc, child_cmd, output=out, stderr=err)
 
-    return out.split()
+    return out
 
 def clean_data(gpu_list: list[str]) -> list[str]:
   clean_list = []
