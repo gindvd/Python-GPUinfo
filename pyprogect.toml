@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "GPUinfo"
 version = "1.0.0"
-description = "Module for getting GPU names, manufactorers, and compatible codecs."
+description = "Module for getting GPU names, manufacturers, and compatible codecs."
 readme = "README.md"
 authors = [
   {name = "David Gingerich", email = "gingerichdvd@gmail.com"}
