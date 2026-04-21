@@ -12,8 +12,8 @@ class CompatibiltyError(Exception):
     return f"{self._message}\n(Incompatible Operating System: {self._oper_system})\n\nCompatible Operating Stsyems: Windows, Linux, MacOS"
 
 system_commands: dict[str, tuple[list[str]]] = {
-    "Linux" : (["lspci"], ["grep", "-iE", "VGA|3D|video"], ["awk", "-F", "': '", r"{print $1}"], ["sed", "s/ (rev .*)$//"]),
-    "Darwin" : (["system_profiler", "SPDisplaysDataType"],  ["grep", "Chipset Model"], ["awk", "-F': '", r"{print $2}"]),
+    "Linux" : (["lspci"], ["grep", "-iE", "VGA|3D|video"], ["awk", "-F", ": ", "{print $2}"], ["sed", "s/ (rev .*)$//"]),
+    "Darwin" : (["system_profiler", "SPDisplaysDataType"],  ["grep", "Chipset Model"], ["awk", "-F': '", "{print $2}"]),
     # empty list is temp solution to keep parent command from being set to 'powershell' / "wmic" and not the full list
     "win11" : (["powershell", "-Command", "Get-CimInstance Win32_VideoController | Select-Object -ExpandProperty Name"], [] ),
     "win-legacy" : (["wmic", "path", "Win32_VideoController", "get", "name"], [])
