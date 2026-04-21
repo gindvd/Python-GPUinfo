@@ -12,7 +12,7 @@ class CompatibiltyError(Exception):
     return f"{self._message}\n(Incompatible Operating System: {self._oper_system})\n\nCompatible Operating Stsyems: Windows, Linux, MacOS"
 
 system_commands: dict[str, tuple[list[str]]] = {
-    "Linux" : (["lspci"], ["grep", "-iE", "VGA|3D|video"], ["awk", "-F': '", r"{print $2}"], ["sed", "s/ (rev .*)$//"]),
+    "Linux" : (["lspci"], ["grep", "-iE", "VGA|3D|video"], ["awk", "-F", "': '", r"{print $1}"], ["sed", "s/ (rev .*)$//"]),
     "Darwin" : (["system_profiler", "SPDisplaysDataType"],  ["grep", "Chipset Model"], ["awk", "-F': '", r"{print $2}"]),
     # empty list is temp solution to keep parent command from being set to 'powershell' / "wmic" and not the full list
     "win11" : (["powershell", "-Command", "Get-CimInstance Win32_VideoController | Select-Object -ExpandProperty Name"], [] ),
@@ -34,24 +34,31 @@ def get_gpu_names() -> str:
       oper_system = "win11"
 
   parent_cmd = system_commands[oper_system][0]
+  print(parent_cmd)
   child_cmds = system_commands[oper_system][1:]
+  print(child_cmds)
 
   output: bytes = run_parent(parent_cmd)
+  print(output)
 
   if child_cmds[0] == []:
-    return output.decode()
+    return output
 
   for child_cmd in child_cmds:
+    print(child_cmd)
     output = run_child(child_cmd, output)
 
-  return output.decode()
+    print(output)
+
+  return output
   
 def run_parent(cmd: list[str]) -> bytes:
   try:
     proc = subprocess.Popen(cmd, 
                             stdout=subprocess.PIPE, 
                             stderr=subprocess.PIPE, 
-                            shell=False)
+                            shell=False,
+                            text=True)
 
     out, err = proc.communicate()
     proc.wait()
@@ -82,7 +89,8 @@ def run_child(child_cmd: list[str], parent_output: bytes) -> bytes:
                              stdin=subprocess.PIPE,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
-                             shell=False) 
+                             shell=False,
+                             text=True) 
     
     out, err = proc.communicate(input=parent_output)
     proc.wait()

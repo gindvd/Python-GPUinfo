@@ -1,5 +1,6 @@
-from GPUinfo.GPUinfo import names
+from GPUinfo.GPUinfo import *
 
 if __name__ == "__main__":
-  names = names()
-  print(names)
+  output = get_manufacturers()
+
+  print(output)

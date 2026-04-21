@@ -5,7 +5,7 @@ David Gingerich
 Version 1.0.0
 """
 
-from handler import *
+from GPUinfo.handler import *
 
 def get_manufacturers():
   device_info = get_gpu_names()
@@ -18,6 +18,9 @@ def get_manufacturers():
     temp = []
     item = remove_symbols(item)
     temp = item.split()
+
+    if temp == []:
+      continue
 
     manufacturers.append(temp[0])
 
