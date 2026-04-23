@@ -37,11 +37,11 @@ for idx, name in enumerate(connected_gpu_names):
     ```
 
     Possible returns options:
-    NVIDIA - for NVIDIA GPUS
-    AMD - for AMD for dedicated and integrated GPUs
-    Intel - for Intel for dedicated and integrated GPUs
-    Apple - for Apple M-Series integrated graphics
-    Adapter - possible return on Virtual Machines and Container hosted OS
+    - NVIDIA - for NVIDIA GPUS
+    - AMD - for AMD for dedicated and integrated GPUs
+    - Intel - for Intel for dedicated and integrated GPUs
+    - Apple - for Apple M-Series integrated graphics
+    - Adapter - possible return on Virtual Machines and Container hosted OS
 
 ### More Details
 For an example of uses for this module, visit [GUI_Video_Compressor/_codec_value](https://github.com/gindvd/GUI_Video_Compressor/blob/main/src/app.py#L419)
