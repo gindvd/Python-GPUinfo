@@ -1,4 +1,4 @@
-# Python_GPUinfo_Module# CTkTrimSlider
+# Python_GPUinfo_Module
 **Python module to get the names, and manufacturers, of all connected graphics cards, both dedicated and integrated**
 
 ## Installation
