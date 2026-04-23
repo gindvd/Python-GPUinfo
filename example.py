@@ -1,4 +1,4 @@
-from GPUinfo import *
+from GPUinfo.GPUinfo import *
 
 connected_gpu_manufacturers = manufacturers()
 
